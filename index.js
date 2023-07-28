@@ -1,10 +1,10 @@
 const userListingContainer = document.querySelector(".user-list");
 
-// Fetch user data from the API
+
 fetch("https://reqres.in/api/users")
     .then((response) => response.json())
     .then((data) => {
-        // Generate user cards dynamically based on API data
+
         data.data.forEach((user) => {
             const userCard = createUserCard(user);
             userListingContainer.appendChild(userCard);
@@ -37,48 +37,42 @@ function createUserCard(userData) {
     right_side.appendChild(p);
     cardDiv.appendChild(right_side);
 
+    console.log(userData.avatar)
+
     return cardDiv;
 }
 
 
-function openUserDetail(userData) {
-    // Create the detail page HTML dynamically
+async function openUserDetail(userData) {
+
     const detailPageContent = `
       <div id="user-detail">
-        <img src="${userData.avatar}" alt="${userData.first_name} ${userData.last_name}">
+        <img src="${userData.avatar}" alt="${userData.first_name}">
         <h2>${userData.first_name} ${userData.last_name}</h2>
         <p>Email: ${userData.email}</p>
     </div>
         <button id="downloadButton">Download</button>
     `;
 
-    // Create a new window/tab to display the detail page
+
     const detailPageWindow = window.open("", "_blank");
     detailPageWindow.document.write(detailPageContent);
 
-    // Add the download functionality
+
     detailPageWindow.document.getElementById("downloadButton").addEventListener("click", function () {
 
-        setTimeout(() => {
-            
-            html2canvas(detailPageWindow.document.getElementById("user-detail")).then(function (canvas) {
-                const base64image = canvas.toDataURL("image/jpg", 1.0);
-                var anchor = document.createElement("a");
-                anchor.setAttribute("href", base64image);
-                anchor.setAttribute("download", "details.jpg");
-                anchor.click();
-                anchor.remove();
-        }, 1000);
+            const container=detailPageWindow.document.getElementById("user-detail");
 
-            // Trigger the image download
-            // const imageDataURL = canvas.toDataURL();
-            // const downloadLink = document.createElement("a");
-            // downloadLink.href = imageDataURL;
-            // downloadLink.download = "user_detail.png";
-            // detailPageWindow.document.body.appendChild(downloadLink);
-            // downloadLink.click();
-            // detailPageWindow.document.body.removeChild(downloadLink);
 
-        });
+            html2canvas(container,{useCORS:true}).then((canvas) => {
+                const imageDataURL = canvas.toDataURL('image/jpeg');
+          
+                
+                const link = document.createElement('a');
+                link.href = imageDataURL;
+                link.download = 'page_image.jpeg';
+                link.click();
+              });
+
     });
 }
